@@ -13,6 +13,37 @@ To run TargetRps Simulation
 
 Simulations found in `./src/gatling/java/com/amazon`
 
+# Recommended Gatling Documentation
+[Gatling Quickstart](https://gatling.io/docs/gatling/tutorials/quickstart/)
+[Gatling Advanced Simulations](https://gatling.io/docs/gatling/tutorials/advanced/)
+[Passing Command Line Parameters](https://gatling.io/docs/gatling/guides/passing_parameters/)
+[Gatling Gradle Plugin](https://gatling.io/docs/gatling/reference/current/extensions/gradle_plugin/)
+
+# Command Line Parameters
+
+Creating command line parameters:
+
+```java
+// Integer
+private static final Integer targetRps = Integer.getInteger("targetRps");
+// Integer with default value
+private static final Integer maxUsers = Integer.getInteger("maxUsers", 1000);
+// String with default value
+private static final String targetHost = System.getProperty("targetHost", "http://localhost");
+```
+
+Setting parameters on run:
+
+```java
+./gradlew clean gatlingRun -DtargetRps=100 -DmaxUsers=10 -DtargetHost=127.0.0.1
+```
+
+Setting Java Options
+
+```shell
+export _JAVA_OPTIONS="-Xms8g -Xmx8g"
+./gradlew clean gatlingRun
+```
 
 # Test Components
 
