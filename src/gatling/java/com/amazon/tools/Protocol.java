@@ -3,10 +3,6 @@ package com.amazon.tools;
 import io.gatling.javaapi.http.HttpDsl;
 import io.gatling.javaapi.http.HttpProtocolBuilder;
 
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 public final class Protocol {
     private Protocol() {
     }
@@ -17,38 +13,42 @@ public final class Protocol {
     public static final String localhost = "localhost";
     private static final String host = System.getProperty("host", localhost);
 
-    private static final String defaultPort = "2021";
-    private static final String port = System.getProperty("port", defaultPort);
+    private static final Integer defaultPort = 2021;
+    private static final Integer port = Integer.getInteger("port", defaultPort);
 
-    public static final List<HttpProtocolBuilder> allProtocols = Stream.of(http, https)
-            .map(protocol -> httpProtocol(protocol, host))
-            .collect(Collectors.toList());
-
-    private static String asUrl(String protocol, String host, String port) {
+    private static String asUrl(String protocol, String host, Integer port) {
         return protocol + "://" + host + ":" + port;
     }
 
     public static HttpProtocolBuilder httpProtocol() {
-        return httpProtocol(host);
+        return httpProtocol(http, host, port);
     }
 
     public static HttpProtocolBuilder httpProtocol(String host) {
-        return httpProtocol(http, host);
+        return httpProtocol(http, host, port);
     }
 
     public static HttpProtocolBuilder httpsProtocol() {
-        return httpsProtocol(host);
+        return httpProtocol(https, host, port);
     }
 
     public static HttpProtocolBuilder httpsProtocol(String host) {
-        return httpProtocol(https, host);
+        return httpProtocol(https, host, port);
+    }
+
+    public static HttpProtocolBuilder httpsProtocol(Integer port) {
+        return httpProtocol(https, host, port);
+    }
+
+    public static HttpProtocolBuilder httpsProtocol(String host, Integer port) {
+        return httpProtocol(https, host, port);
     }
 
     public static HttpProtocolBuilder httpProtocol(String protocol, String host) {
         return httpProtocol(protocol, host, port);
     }
 
-    public static HttpProtocolBuilder httpProtocol(String protocol, String host, String port) {
+    public static HttpProtocolBuilder httpProtocol(String protocol, String host, Integer port) {
         return HttpDsl.http
                 .baseUrl(asUrl(protocol, host, port))
                 .acceptHeader("application/json")

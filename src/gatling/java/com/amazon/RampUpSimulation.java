@@ -3,11 +3,12 @@ package com.amazon;
 import com.amazon.tools.Chain;
 import com.amazon.tools.Protocol;
 import io.gatling.javaapi.core.CoreDsl;
+import io.gatling.javaapi.core.PopulationBuilder;
+import io.gatling.javaapi.core.ProtocolBuilder;
 import io.gatling.javaapi.core.ScenarioBuilder;
 import io.gatling.javaapi.core.Simulation;
 
 import java.time.Duration;
-import java.util.stream.Collectors;
 
 public class RampUpSimulation extends Simulation {
     private static final Integer largeBatchSize = 200;
@@ -15,17 +16,29 @@ public class RampUpSimulation extends Simulation {
     private static final Duration rampUpTime = Duration.ofSeconds(30);
     private static final Duration peakLoadTime = Duration.ofMinutes(10);
 
+    private static PopulationBuilder rampUpPopulation(ProtocolBuilder protocol) {
+        return CoreDsl.scenario("Ramp Up using " + protocol.protocol() + " protocol Scenario")
+                .exec(Chain.sendApacheCommonLogPostRequest("Post logs with large batch", largeBatchSize))
+                .during(peakLoadTime)
+                .on(Chain.sendApacheCommonLogPostRequest("Post logs with large batch", largeBatchSize))
+                .injectOpen(
+                        CoreDsl.rampUsers(rampUsers).during(rampUpTime),
+                        CoreDsl.nothingFor(peakLoadTime)
+                ).protocols(protocol);
+    }
+
+
     ScenarioBuilder rampUpScenario = CoreDsl.scenario("Ramp Up Scenario")
-            .forever()
+            .during(peakLoadTime)
             .on(Chain.sendApacheCommonLogPostRequest("Post logs with large batch", largeBatchSize));
 
     {
-        setUp(Protocol.allProtocols.stream()
-                .map(protocol ->
-                        rampUpScenario.injectOpen(
-                                CoreDsl.rampUsers(rampUsers).during(rampUpTime)
-                        ).protocols(protocol))
-                .collect(Collectors.toList())
+        setUp(
+                rampUpScenario.injectOpen(
+                        CoreDsl.rampUsers(rampUsers).during(rampUpTime)
+                )
+        ).protocols(
+                Protocol.httpProtocol()
         ).assertions(
                 CoreDsl.global().failedRequests().percent().lt(1.0),
                 CoreDsl.global().responseTime().mean().lt(600),

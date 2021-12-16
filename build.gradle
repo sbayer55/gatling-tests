@@ -18,3 +18,10 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
+gatling {
+    simulations = {
+        include "**/Http*.java"
+    }
+}
+

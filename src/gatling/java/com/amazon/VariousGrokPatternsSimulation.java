@@ -19,7 +19,7 @@ import java.util.function.Function;
 public class VariousGrokPatternsSimulation extends Simulation {
     private static final Integer rampUsers = 20;
     private static final Duration rampUpTime = Duration.ofSeconds(30);
-    private static final Duration peakLoadTime = Duration.ofMinutes(10);
+    private static final Duration testDuration = Duration.ofMinutes(10);
     private static final ObjectMapper mapper = new ObjectMapper();
 
     private static final Function<Session, String> multipleGrokPatterns = session -> {
@@ -45,15 +45,13 @@ public class VariousGrokPatternsSimulation extends Simulation {
                     .body(CoreDsl.StringBody(VariousGrokPatternsSimulation.multipleGrokPatterns)));
 
     ScenarioBuilder sendMultipleGrokPatternsScenario = CoreDsl.scenario("Send multiple grok patterns")
-            .forever()
+            .during(testDuration)
             .on(sendMultipleGrokPatterns);
 
     {
         setUp(sendMultipleGrokPatternsScenario.injectOpen(
                 CoreDsl.rampUsers(rampUsers).during(rampUpTime)
-        )).maxDuration(
-                peakLoadTime.plus(rampUpTime)
-        ).protocols(Protocol.httpProtocol())
+        )).protocols(Protocol.httpProtocol())
                 .assertions(
                         CoreDsl.global().responseTime().max().lt(1000),
                         CoreDsl.global().failedRequests().count().is(0L)
