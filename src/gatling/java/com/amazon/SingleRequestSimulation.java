@@ -23,9 +23,9 @@ public class SingleRequestSimulation extends Simulation {
     {
 
         setUp(
-                basicScenario.injectOpen(
-                        CoreDsl.atOnceUsers(1)
-                ).protocols(Protocol.httpProtocol())
+                basicScenario.injectOpen(CoreDsl.atOnceUsers(1))
+        ).protocols(
+                Protocol.httpProtocol()
         ).assertions(
                 CoreDsl.global().responseTime().mean().lt(100),
                 CoreDsl.global().successfulRequests().percent().is(100.0)
