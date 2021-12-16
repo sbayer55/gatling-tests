@@ -15,13 +15,21 @@ public class RampUpSimulation extends Simulation {
     private static final Duration peakLoadTime = Duration.ofMinutes(10);
 
     ScenarioBuilder rampUpScenario = CoreDsl.scenario("Ramp Up Scenario")
-            .forever()
+            .during(peakLoadTime)
             .on(Chain.sendApacheCommonLogPostRequest("Post logs with large batch", largeBatchSize));
 
     {
-        setUp(rampUpScenario.injectOpen(
-                CoreDsl.rampUsers(rampUsers).during(rampUpTime),
-                CoreDsl.nothingFor(peakLoadTime)
-        )).protocols(Protocol.httpProtocol());
+        setUp(
+                rampUpScenario.injectOpen(
+                        CoreDsl.rampUsers(rampUsers).during(rampUpTime)
+                )
+        ).protocols(
+                Protocol.httpProtocol()
+        ).assertions(
+                CoreDsl.global().failedRequests().percent().lt(1.0),
+                CoreDsl.global().responseTime().mean().lt(600),
+                CoreDsl.global().responseTime().max().lt(10000),
+                CoreDsl.global().requestsPerSec().gt(100.0)
+        );
     }
 }

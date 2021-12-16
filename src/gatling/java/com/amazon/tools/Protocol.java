@@ -7,17 +7,50 @@ public final class Protocol {
     private Protocol() {
     }
 
-    public static final String localhost = "http://localhost:2021";
-    private static final String targetHost = System.getProperty("targetHost", localhost);
+    private static final String http = "http";
+    private static final String https = "https";
 
+    public static final String localhost = "localhost";
+    private static final String host = System.getProperty("host", localhost);
 
-    public static HttpProtocolBuilder httpProtocol() {
-        return httpProtocol(targetHost);
+    private static final Integer defaultPort = 2021;
+    private static final Integer port = Integer.getInteger("port", defaultPort);
+
+    private static String asUrl(String protocol, String host, Integer port) {
+        return protocol + "://" + host + ":" + port;
     }
 
-    public static HttpProtocolBuilder httpProtocol(String targetHost) {
+    public static HttpProtocolBuilder httpProtocol() {
+        return httpProtocol(http, host, port);
+    }
+
+    public static HttpProtocolBuilder httpProtocol(String host) {
+        return httpProtocol(http, host, port);
+    }
+
+    public static HttpProtocolBuilder httpsProtocol() {
+        return httpProtocol(https, host, port);
+    }
+
+    public static HttpProtocolBuilder httpsProtocol(String host) {
+        return httpProtocol(https, host, port);
+    }
+
+    public static HttpProtocolBuilder httpsProtocol(Integer port) {
+        return httpProtocol(https, host, port);
+    }
+
+    public static HttpProtocolBuilder httpsProtocol(String host, Integer port) {
+        return httpProtocol(https, host, port);
+    }
+
+    public static HttpProtocolBuilder httpProtocol(String protocol, String host) {
+        return httpProtocol(protocol, host, port);
+    }
+
+    public static HttpProtocolBuilder httpProtocol(String protocol, String host, Integer port) {
         return HttpDsl.http
-                .baseUrl(targetHost)
+                .baseUrl(asUrl(protocol, host, port))
                 .acceptHeader("application/json")
                 .header("Content-Type", "application/json");
     }

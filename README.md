@@ -1,14 +1,29 @@
 To run all Simulation:
 
-```
-./gradlew clean gatlingRun
+```shell
+./gradlew gatlingRun
 ```
 
+If you need to run a task several times in a row (with different environment or configuration), you may use the --rerun-tasks flag.
+
+example:
+
+```shell
+./gradlew --rerun-tasks gatlingRun
+```
+
+To always rerun the gatling task when called, you may add this line in build.gradle:
+
+```groovy
+tasks.withType(io.gatling.gradle.GatlingRunTask) {
+  outputs.upToDateWhen { false }
+}
+```
 
 To run TargetRps Simulation
 
-```
-./gradlew clean gatlingRun-com.amazon.TargetRpsSimulation
+```shell
+./gradlew gatlingRun-com.amazon.TargetRpsSimulation
 ```
 
 Simulations found in `./src/gatling/java/com/amazon`
@@ -35,14 +50,14 @@ private static final String targetHost = System.getProperty("targetHost", "http:
 Setting parameters on run:
 
 ```java
-./gradlew clean gatlingRun -DtargetRps=100 -DmaxUsers=10 -DtargetHost=127.0.0.1
+./gradlew gatlingRun -DtargetRps=100 -DmaxUsers=10 -DtargetHost=127.0.0.1
 ```
 
 Setting Java Options
 
 ```shell
 export _JAVA_OPTIONS="-Xms8g -Xmx8g"
-./gradlew clean gatlingRun
+./gradlew gatlingRun
 ```
 
 # Test Components
