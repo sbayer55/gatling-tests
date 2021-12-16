@@ -28,7 +28,7 @@ public class VariousGrokPatternsSimulation extends Simulation {
                 Map.of("log", "127.0.0.1 - Rosaline [" + Templates.now() + "] \\\"PUT /apache_pb.gif HTTP/1.0\\\" 202 2326"),
                 Map.of("log", "127.0.0.1 - Talbot [" + Templates.now() + "] \\\"POST /apache_pb.gif HTTP/1.0\\\" 400 2326"),
                 Map.of("log", "127.0.0.1 - Adriene [" + Templates.now() + "] \\\"DELETE /apache_pb.gif HTTP/1.0\\\" 404 2326"),
-                Map.of("log", "127.0.0.1 Shiv [" + Templates.now() + "] \\\"GET /apache_pb.gif HTTP/1.0\\\" 200 2326")
+                Map.of("log", "I should fail the grok parser")
         );
 
         try {
