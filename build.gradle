@@ -18,3 +18,7 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
+gatling {
+    jvmArgs = ['-Xms8G', '-Xmx8G']
+}
