@@ -12,10 +12,9 @@ public class SlowBurnSimulation extends Simulation {
     private static final Integer largeBatchSize = 200;
     private static final Integer rampUsers = 60;
     private static final Duration rampUpTime = Duration.ofMinutes(60);
-    private static final Duration peakLoadTime = Duration.ofMinutes(10);
 
     ScenarioBuilder rampUpScenario = CoreDsl.scenario("Slow Burn")
-            .during(peakLoadTime)
+            .during(rampUpTime)
             .on(Chain.sendApacheCommonLogPostRequest("Post logs with large batch", largeBatchSize));
 
     {
